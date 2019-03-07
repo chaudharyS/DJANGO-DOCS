@@ -1,0 +1,44 @@
+{% extends 'survey/base.html' %}
+{% load i18n %}
+{% load survey_extras %}
+
+{% block title %} {{survey.name}} {% endblock title %}
+
+{% block extrajs %}
+    {{response_form.media}}
+{% endblock %}
+
+{% block body %}
+	{% if survey.logo %}
+		<img src="{{ survey.logo.url }}" class="rounded mx-auto d-block" alt="logo" width="75" height="75">
+	{% endif %}
+	<br>
+	<h1> {{survey.name}} </h1>
+	<div class="survey-description"> {{survey.description|safe}} </div>
+	<div><form action="{% url 'survey-detail' id=survey.id %}" method="post">
+	    {% csrf_token %}
+        {% for category in categories %}
+            <h3> {{category}} </h3>
+            <p> {{category.description}} </p>
+		
+                    
+			        <div id="{{category.slugify}}" class="e
+				        {{ response_form|collapse_form:category }}">
+				            <div class="panel-body">
+	                           {% include "survey/question.html" %}
+                                 </div>
+            </div>
+        {% empty %}
+            <h3> {% trans "Questions" %} </h3>
+            {% include "survey/question.html" %}
+        {% endfor %}
+
+        <br>
+
+	    <input
+            class="btn btn-primary"
+	        type="submit"
+	        value="{% trans "I'm done!" %}"
+        >
+	</form></div>
+{% endblock %}
